@@ -1,8 +1,10 @@
-package leindex
+package leindex_test
 
 import (
 	"encoding/binary"
 	"testing"
+
+	"github.com/KarpelesLab/leindex"
 )
 
 type testVec struct {
@@ -13,16 +15,18 @@ type testVec struct {
 func TestLE(t *testing.T) {
 	buf := make([]byte, 4096)
 
-	binary.LittleEndian.PutUint32(buf[3030:3034], 123456789)
+	binary.LittleEndian.PutUint32(buf[:4], 0x98765432)
 	binary.LittleEndian.PutUint32(buf[52:56], 1546300799)
 	binary.LittleEndian.PutUint32(buf[56:60], 1672531201)
 	binary.LittleEndian.PutUint32(buf[60:64], 1650513840)
 	binary.LittleEndian.PutUint32(buf[90:94], 0xffffffff)
 	binary.LittleEndian.PutUint32(buf[30:34], 0x12345678)
+	binary.LittleEndian.PutUint32(buf[3030:3034], 123456789)
 	buf[8] = 0x1f
 
 	tests := []testVec{
-		{1546300800, 1672531200, 60},
+		{0x98765000, 0x98766000, 0},
+		{1546300800, 1672531200, 59},
 		{123456789, 123456790, 3030},
 		{1000, 1000, -1},
 		{0x0000ffff, 0x0000ffff, 92},
@@ -32,7 +36,7 @@ func TestLE(t *testing.T) {
 	}
 
 	for _, v := range tests {
-		res := IndexLE32(buf, v.min, v.max)
+		res := leindex.IndexLE32(buf, v.min, v.max)
 		if res != v.expect {
 			if res == -1 {
 				t.Errorf("could not find expected value %x~%x at %d", v.min, v.max, v.expect)

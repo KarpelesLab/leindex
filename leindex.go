@@ -33,7 +33,7 @@ main:
 		state := 0
 		for j := 0; j < itemln; j++ {
 			t := buf[i-j]
-			//log.Printf("[%d] t=%d state=%d", j, t, state)
+			//log.Printf("[%d] i=%d t=0x%x state=%d", j, i, t, state)
 			switch state {
 			case 0:
 				// initial
@@ -41,7 +41,7 @@ main:
 					continue main
 				}
 				if t > revmin[j] && t < revmax[j] {
-					return i - itemln + 2
+					return i - itemln + 1
 				}
 				if t == revmin[j] && t == revmax[j] {
 					// stay in state 0
@@ -57,7 +57,7 @@ main:
 					continue main
 				}
 				if t < revmax[j] {
-					return i - itemln + 2
+					return i - itemln + 1
 				}
 			case -1:
 				// previous digit was minimum, need to check if higher than min or equal
@@ -65,7 +65,7 @@ main:
 					continue main
 				}
 				if t > revmin[j] {
-					return i - itemln + 2
+					return i - itemln + 1
 				}
 			}
 		}
