@@ -28,6 +28,11 @@ func IndexLEbin(buf, min, max []byte) int {
 		revmax[itemln-i-1] = max[i]
 	}
 
+	// return -1 if buffer is smaller than an item
+	if bufln < itemln {
+		return -1
+	}
+
 main:
 	for i := itemln - 1; i < bufln; i++ {
 		state := 0
